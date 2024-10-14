@@ -3,15 +3,15 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
+use std::marker::Copy;
 
 
 #[derive(Debug)]
 struct TreeNode<T>
 where
-    T: Ord,
+    T: Ord + Copy,
 {
     value: T,
     left: Option<Box<TreeNode<T>>>,
@@ -21,14 +21,14 @@ where
 #[derive(Debug)]
 struct BinarySearchTree<T>
 where
-    T: Ord,
+    T: Ord + Copy,
 {
     root: Option<Box<TreeNode<T>>>,
 }
 
 impl<T> TreeNode<T>
 where
-    T: Ord,
+    T: Ord + Copy,
 {
     fn new(value: T) -> Self {
         TreeNode {
@@ -41,7 +41,7 @@ where
 
 impl<T> BinarySearchTree<T>
 where
-    T: Ord,
+    T: Ord + Copy,
 {
 
     fn new() -> Self {
@@ -51,22 +51,77 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        match self.root.as_mut() {
+            Some(r) => {
+                r.insert(value);
+            },
+            None => {
+                self.root = Some(Box::new(TreeNode::new(value)));
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        if self.root.is_none(){
+            return false;
+        }
+        self.root.as_ref().unwrap().search(value)
     }
 }
 
 impl<T> TreeNode<T>
 where
-    T: Ord,
+    T: Ord + Copy,
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        if value < self.value {
+            match self.left.as_mut() {
+                Some(l) => {
+                    l.insert(value);
+                },
+                None => {
+                    self.left = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+        } else if value > self.value {
+            match self.right.as_mut() {
+                Some(r) => {
+                    r.insert(value);
+                },
+                None => {
+                    self.right = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+        }
+    }
+
+    fn search(&self, value: T) -> bool {
+        if value == self.value {
+            return true;
+        }
+        if value < self.value {
+            match &self.left {
+                Some(l) => {
+                    l.search(value)
+                },
+                None => {
+                    false
+                }
+            }
+        } else {
+            match &self.right {
+                Some(r) => {
+                    r.search(value)
+                },
+                None => {
+                    false
+                }
+            }
+        }
     }
 }
 
